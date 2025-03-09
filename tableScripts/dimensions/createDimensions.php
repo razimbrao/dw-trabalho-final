@@ -12,7 +12,7 @@ function createDimensions(): void
     $pdo = Connect::getInstance();
     $pdo->exec("DELETE FROM locals");
     $pdo->exec("DELETE FROM crime_dates");
-    $pdo->exec("DELETE FROM crimes_descriptions");
+    $pdo->exec("DELETE FROM crime_descriptions");
     $pdo->exec("DELETE FROM crime_types");
     $pdo->exec("DELETE FROM iucrs");
     $pdo->exec("DELETE FROM location_descriptions");
@@ -21,7 +21,7 @@ function createDimensions(): void
 
     createLocalsDimension($rows);
     createLocationDescriptionsDimension($rows);
-    createCrimesDescriptionsDimension($rows);
+    createCrimeDescriptionsDimension($rows);
     //createProductDimension($rows);
     //createClientDimension($rows);
     //createOrderDateDimension($rows);

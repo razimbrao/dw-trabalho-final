@@ -2,24 +2,24 @@
 
 use Php\Dw\Connect;
 
-function createCrimesDescriptionsDimension(array $rows): void
+function createCrimeDescriptionsDimension(array $rows): void
 {
-    $crimesDescriptions = [];
+    $crimeDescriptions = [];
     foreach($rows as $row) {
         $description = trim($row["description"]);
 
-        if(array_key_exists($description, $crimesDescriptions)) {
+        if(array_key_exists($description, $crimeDescriptions)) {
             continue;
         }
 
-        $crimesDescriptions[$description] = 1;
+        $crimeDescriptions[$description] = 1;
     }
 
     $pdo = Connect::getInstance();
 
-    $sql = "INSERT INTO crimes_descriptions (description) VALUES (:description)";
+    $sql = "INSERT INTO crime_descriptions (description) VALUES (:description)";
 
-    foreach($crimesDescriptions as $crimeDescription => $value) {
+    foreach($crimeDescriptions as $crimeDescription => $value) {
         $pdo->prepare($sql)->execute([":description" => $crimeDescription]);
     }
 }
