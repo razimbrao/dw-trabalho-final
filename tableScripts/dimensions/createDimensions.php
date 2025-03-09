@@ -11,6 +11,7 @@ function createDimensions(): void
     $pdo = Connect::getInstance();
     $pdo->exec("DELETE FROM locals");
     $pdo->exec("DELETE FROM crime_dates");
+    $pdo->exec("DELETE FROM crimes_descriptions");
     $pdo->exec("DELETE FROM crime_types");
     $pdo->exec("DELETE FROM iucrs");
     $pdo->exec("DELETE FROM locale_description");
