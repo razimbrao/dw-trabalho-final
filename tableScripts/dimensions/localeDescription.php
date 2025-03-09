@@ -2,7 +2,7 @@
 
 use Php\Dw\Connect;
 
-function createLocaleDescriptionsDimension(array $rows): void
+function createLocationDescriptionsDimension(array $rows): void
 {
     $locals = [];
     foreach($rows as $row) {
