@@ -9,10 +9,10 @@ require_once __DIR__ . "/order.php";
 function createDimensions(): void
 {
     $pdo = Connect::getInstance();
-    $pdo->exec("DELETE FROM products");
-    $pdo->exec("DELETE FROM clients");
-    $pdo->exec("DELETE FROM order_dates");
-    $stmt = $pdo->query("SELECT * FROM staging_area");
+    $pdo->exec("DELETE FROM locals");
+    $pdo->exec("DELETE FROM crime_dates");
+    $pdo->exec("DELETE FROM crime_types");
+    $stmt = $pdo->query("SELECT * FROM staging_area LIMIT 10");
     $rows = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
     createProductDimension($rows);

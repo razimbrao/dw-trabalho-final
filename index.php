@@ -9,9 +9,9 @@ require_once __DIR__ . "/tableScripts/stagingAreaConfig.php";
 require_once __DIR__ . "/tableScripts/dimensions/createDimensions.php";
 require_once __DIR__ . "/tableScripts/fact/sales.php";
 
-$csv = new Csv(__DIR__ . "/Crimes_-_2001_to_Present.csv");
+//$csv = new Csv(__DIR__ . "/Crimes_-_2001_to_Present.csv");
 
-createStagingArea($csv);
-//createDimensions();
+//createStagingArea($csv);
+createDimensions();
 //createFactSales();
 //createDailySalesFact();

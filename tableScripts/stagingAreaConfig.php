@@ -29,7 +29,7 @@ const STAGING_AREA_HEADER_TRANSLATION = [
 
 $pdo = Connect::getInstance();
 
-$pdo->exec("DELETE FROM staging_area");
+//$pdo->exec("DELETE FROM staging_area");
 
 function createStagingArea(Csv $csv) {
     $rows = [];
@@ -43,6 +43,7 @@ function createStagingArea(Csv $csv) {
         if (count($rows) === 100) {
             insertIntoStagingArea($rows);
             $rows = [];
+            break;
         }
     }
 }

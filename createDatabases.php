@@ -6,7 +6,7 @@ require_once __DIR__ . "/vendor/autoload.php";
 
 $pdo = Connect::getInstance();
 
-$pdo->exec("DROP TABLE IF EXISTS staging_area");
+//$pdo->exec("DROP TABLE IF EXISTS staging_area");
 
 $sql = "CREATE TABLE IF NOT EXISTS staging_area (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -31,6 +31,36 @@ $sql = "CREATE TABLE IF NOT EXISTS staging_area (
     latitude DECIMAL(10,7),
     longitude DECIMAL(10,7),
     location VARCHAR(255)
+);";
+
+$pdo->exec($sql);
+
+$sql = "CREATE TABLE IF NOT EXISTS locals (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    latitude VARCHAR(50),
+    longitude VARCHAR(50),
+    description TEXT
+);";
+
+$pdo->exec($sql);
+
+$sql = "CREATE TABLE IF NOT EXISTS crime_dates (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    crime_date DATETIME UNIQUE
+);";
+
+$pdo->exec($sql);
+
+$sql = "CREATE TABLE IF NOT EXISTS crime_types (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    crime_type VARCHAR(255) UNIQUE
+);";
+
+$pdo->exec($sql);
+
+$sql = "CREATE TABLE IF NOT EXISTS iucrs (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    iucr VARCHAR(50) UNIQUE
 );";
 
 $pdo->exec($sql);
