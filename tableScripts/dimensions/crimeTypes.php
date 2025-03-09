@@ -8,7 +8,7 @@ function createCrimeTypesDimension(array $rows): void
     foreach($rows as $row) {
         $crimeType = trim($row["primary_type"]);
 
-        if(array_key_exists($crimeTypes, $crimeType)) {
+        if(array_key_exists($crimeType, $crimeTypes)) {
             continue;
         }
 
