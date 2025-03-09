@@ -4,6 +4,7 @@ use Php\Dw\Connect;
 
 require_once __DIR__ . "/locals.php";
 require_once __DIR__ . "/crimesDescriptions.php";
+require_once __DIR__ . "/crimeDescriptions.php";
 require_once __DIR__ . "/crimeTypes.php";
 require_once __DIR__ . "/locationDescriptions.php";
 require_once __DIR__ . "/iucrs.php";
@@ -19,6 +20,8 @@ function createDimensions(): void
     $pdo->exec("DELETE FROM iucrs");
     $pdo->exec("DELETE FROM location_descriptions");
     $stmt = $pdo->query("SELECT * FROM staging_area LIMIT 10");
+    $pdo->exec("DELETE FROM crime_dates");
+    $pdo->exec("DELETE FROM crime_days");
     $rows = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
     createLocalsDimension($rows);
@@ -26,4 +29,6 @@ function createDimensions(): void
     createCrimeDescriptionsDimension($rows);
     createCrimeTypesDimension($rows);
     createIUCRsDimension($rows);
+    createCrimeDatesDimension($rows);
+    createCrimeDaysDimension($rows);
 }

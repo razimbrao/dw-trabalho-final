@@ -62,6 +62,11 @@ $sql = "CREATE TABLE IF NOT EXISTS crime_dates (
     crime_date DATETIME UNIQUE
 );";
 
+$sql = "CREATE TABLE IF NOT EXISTS crime_days (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    crime_day DATETIME UNIQUE
+);";
+
 $pdo->exec($sql);
 
 $sql = "CREATE TABLE IF NOT EXISTS crime_types (
