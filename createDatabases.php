@@ -35,11 +35,24 @@ $sql = "CREATE TABLE IF NOT EXISTS staging_area (
 
 $pdo->exec($sql);
 
+$sql = "CREATE TABLE IF NOT EXISTS crime_description (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    description VARCHAR(255) UNIQUE
+);";
+
+$pdo->exec($sql);
+
+$sql = "CREATE TABLE IF NOT EXISTS locale_description (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    description VARCHAR(255) UNIQUE
+);";
+
+$pdo->exec($sql);
+
 $sql = "CREATE TABLE IF NOT EXISTS locals (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     latitude VARCHAR(50),
-    longitude VARCHAR(50),
-    description TEXT
+    longitude VARCHAR(50)
 );";
 
 $pdo->exec($sql);
