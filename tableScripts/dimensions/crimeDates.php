@@ -34,8 +34,8 @@ function createCrimeDaysDimension(array $rows): void
         $fullDate = trim($row["date"]);
         $fullUpdate = trim($row["updated_on"]);
 
-        $simpleDate = explode(' ', $fullDate)[0];
-        $simpleUpdate = explode(' ', $fullUpdate)[0];
+        $simpleDate = explode('/', $fullDate)[0];
+        $simpleUpdate = explode('/', $fullUpdate)[0];
 
         if (!array_key_exists($simpleDate, $crimeDates)) {
             $crimeDates[$simpleDate] = 1;
