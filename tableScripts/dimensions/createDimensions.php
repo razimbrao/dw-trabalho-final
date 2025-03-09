@@ -26,4 +26,6 @@ function createDimensions(): void
     createCrimeDescriptionsDimension($rows);
     createCrimeTypesDimension($rows);
     createIUCRsDimension($rows);
+
+    createCrimeFact($rows);
 }
