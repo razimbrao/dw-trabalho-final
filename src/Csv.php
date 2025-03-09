@@ -14,7 +14,7 @@ class Csv
     {
         $csv = fopen($this->csv, "r");
         try {
-            while(($row = fgetcsv($csv, escape: "\\")) !== false) {
+            while(($row = fgetcsv($csv, separator: ";", escape: "\\")) !== false) {
                 if(!count($this->header)) {
                     $row[0] = preg_replace('/^\x{FEFF}/u', '', $row[0]);
                     $this->header = $this->readRow($row[0]);

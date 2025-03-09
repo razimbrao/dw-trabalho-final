@@ -40,16 +40,15 @@ function createStagingArea(Csv $csv) {
             $insertRow[$databaseField] = $row[$key];
         }
         $rows[] = $insertRow;
-        if (count($rows) === 2) {
+        if (count($rows) === 100) {
             insertIntoStagingArea($rows);
-            die();
+            $rows = [];
         }
     }
 }
 
 function insertIntoStagingArea(array $rows): void
 {
-    echo("insert");
     if (empty($rows)) {
         return;
     }
