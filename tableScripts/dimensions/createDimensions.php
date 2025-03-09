@@ -2,10 +2,10 @@
 
 use Php\Dw\Connect;
 
-require_once __DIR__ . "/product.php";
 require_once __DIR__ . "/locals.php";
 require_once __DIR__ . "/crimesDescriptions.php";
 require_once __DIR__ . "/locationDescriptions.php";
+require_once __DIR__ . "/iucrs.php";
 
 function createDimensions(): void
 {
@@ -22,11 +22,5 @@ function createDimensions(): void
     createLocalsDimension($rows);
     createLocationDescriptionsDimension($rows);
     createCrimeDescriptionsDimension($rows);
-    //createProductDimension($rows);
-    //createClientDimension($rows);
-    //createOrderDateDimension($rows);
-    //createOrderDayDimension($rows);
-    //createFactSales();
-    //createDailySalesFact();
-    //createAggSalesFact();
+    createIUCRsDimension($rows);
 }
