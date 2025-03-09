@@ -42,7 +42,7 @@ $sql = "CREATE TABLE IF NOT EXISTS crime_descriptions (
 
 $pdo->exec($sql);
 
-$sql = "CREATE TABLE IF NOT EXISTS locale_descriptions (
+$sql = "CREATE TABLE IF NOT EXISTS location_descriptions (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     description VARCHAR(255) UNIQUE
 );";
