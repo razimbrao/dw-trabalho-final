@@ -14,8 +14,8 @@ class Csv
     {
         $csv = fopen($this->csv, "r");
         try {
-            while(($row = fgetcsv($csv, separator: ";", escape: "\\")) !== false) {
-                if(!count($this->header)) {
+            while (($row = fgetcsv($csv, separator: ";", escape: "\\")) !== false) {
+                if (!count($this->header)) {
                     $row[0] = preg_replace('/^\x{FEFF}/u', '', $row[0]);
                     $this->header = $this->readRow($row[0]);
                     continue;
@@ -28,15 +28,12 @@ class Csv
         return [];
     }
 
-    /**
-     * @param string $row
-     * @return string[]
-     */
     private function readRow(string $row): array
     {
-        return explode(",", $row);
+        return str_getcsv($row, ",", '"', '\\');
     }
 }
+
 
 /**
  * ID /STAG ID
@@ -62,12 +59,13 @@ class Csv
  * Longitude LOCAL
  * Location (LAT, LONG)
 
-    FATO: CRIME - descrição do crime, domestic, arrest, case number
+    FATO: CRIME - domestic, arrest, case number
  *  DIMENSÕES:
         LOCAL
  *          lat
  *          long
  *          descrição
+ *      DESCRIPTION
  *      DATA DO CASO
  *      DATA UPDATE
  *      TIPO DO CRIME
