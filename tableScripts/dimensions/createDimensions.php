@@ -5,6 +5,7 @@ use Php\Dw\Connect;
 require_once __DIR__ . "/product.php";
 require_once __DIR__ . "/locals.php";
 require_once __DIR__ . "/locationDescriptions.php";
+require_once __DIR__ . "/crimeTypes.php";
 require_once __DIR__ . "/order.php";
 
 function createDimensions(): void
@@ -20,6 +21,7 @@ function createDimensions(): void
 
     createLocalsDimension($rows);
     createLocationDescriptionsDimension($rows);
+    createCrimeTypesDimension($rows);
     //createProductDimension($rows);
     //createClientDimension($rows);
     //createOrderDateDimension($rows);
