@@ -4,7 +4,7 @@ use Php\Dw\Connect;
 
 require_once __DIR__ . "/product.php";
 require_once __DIR__ . "/locals.php";
-require_once __DIR__ . "/order.php";
+require_once __DIR__ . "/crimesDescriptions.php";
 
 function createDimensions(): void
 {
@@ -18,6 +18,7 @@ function createDimensions(): void
     $rows = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
     createLocalsDimension($rows);
+    createCrimesDescriptionsDimension($rows);
     //createProductDimension($rows);
     //createClientDimension($rows);
     //createOrderDateDimension($rows);
