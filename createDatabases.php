@@ -35,14 +35,14 @@ $sql = "CREATE TABLE IF NOT EXISTS staging_area (
 
 $pdo->exec($sql);
 
-$sql = "CREATE TABLE IF NOT EXISTS crime_description (
+$sql = "CREATE TABLE IF NOT EXISTS crime_descriptions (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     description VARCHAR(255) UNIQUE
 );";
 
 $pdo->exec($sql);
 
-$sql = "CREATE TABLE IF NOT EXISTS locale_description (
+$sql = "CREATE TABLE IF NOT EXISTS locale_descriptions (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     description VARCHAR(255) UNIQUE
 );";
