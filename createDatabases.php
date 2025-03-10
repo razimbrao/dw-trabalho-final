@@ -82,3 +82,22 @@ $sql = "CREATE TABLE IF NOT EXISTS iucrs (
 );";
 
 $pdo->exec($sql);
+
+$sql = "CREATE TABLE IF NOT EXISTS crimes (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    arrest BOOLEAN,
+    crime_description_id INTEGER,
+    location_description_id INTEGER,
+    local_id INTEGER,
+    crime_date_id INTEGER,
+    crime_type_id INTEGER,
+    iucr_id INTEGER,
+    FOREIGN KEY(crime_description_id) REFERENCES crime_descriptions(id),
+    FOREIGN KEY(location_description_id) REFERENCES location_descriptions(id),
+    FOREIGN KEY(local_id) REFERENCES locals(id),
+    FOREIGN KEY(crime_date_id) REFERENCES crime_dates(id),
+    FOREIGN KEY(crime_type_id) REFERENCES crime_types(id),
+    FOREIGN KEY(iucr_id) REFERENCES iucrs(id)
+);";
+
+$pdo->exec($sql);

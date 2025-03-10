@@ -13,5 +13,5 @@ require_once __DIR__ . "/tableScripts/fact/crime.php";
 
 //createStagingArea($csv);
 createDimensions();
-//createFactSales();
+createCrimeFact();
 //createDailySalesFact();

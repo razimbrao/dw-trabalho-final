@@ -21,7 +21,7 @@ function createDimensions(): void
     $pdo->exec("DELETE FROM location_descriptions");
     $pdo->exec("DELETE FROM crime_dates");
     $pdo->exec("DELETE FROM crime_days");
-    $stmt = $pdo->query("SELECT * FROM staging_area LIMIT 10");
+    $stmt = $pdo->query("SELECT * FROM staging_area LIMIT 10000");
     $rows = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
     createLocalsDimension($rows);
@@ -31,6 +31,4 @@ function createDimensions(): void
     createIUCRsDimension($rows);
     createCrimeDatesDimension($rows);
     createCrimeDaysDimension($rows);
-
-    //createCrimeFact($rows);
 }

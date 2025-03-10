@@ -6,7 +6,7 @@ function createCrimeDescriptionsDimension(array $rows): void
 {
     $crimeDescriptions = [];
     foreach($rows as $row) {
-        $description = trim($row["description"]);
+        $description = ucfirst(trim($row["description"]));
 
         if(array_key_exists($description, $crimeDescriptions)) {
             continue;

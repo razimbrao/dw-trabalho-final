@@ -1,199 +1,90 @@
 <?php
 
 use Php\Dw\Connect;
-function createFactSales(): void
+function createCrimeFact(): void
 {
     $pdo = Connect::getInstance();
-    $pdo->exec("DELETE FROM sales");
-    $stmt = $pdo->query("SELECT * from staging_area");
+    $pdo->exec("DELETE FROM crimes");
+    $stmt = $pdo->query("SELECT * from staging_area LIMIT 10000");
+    $totalRegisters = 8269600;
     $rows = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
-    $sql = "INSERT INTO sales (product_id, client_id, order_date_id, total_amount) VALUES (:product_id, :client_id, :order_date_id, :total_amount)";
-    foreach($rows as $row) {
-        $insert = [];
-        $insert[":product_id"] = getProductId($row["produto"]);
-        $insert[":client_id"] = getClientId($row["cliente"]);
-        $insert[":order_date_id"] = getOrderDateId($row["data_pedido"]);
-        $insert[":total_amount"] = $row["valor_total"];
-        $pdo->prepare($sql)->execute($insert);
-    }
-}
-
-function createDailySalesFact(): void
-{
-    $pdo = Connect::getInstance();
-    $pdo->exec("DELETE FROM daily_sales");
-
-    $stmt = $pdo->query("SELECT * from staging_area");
-    $rows = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-
-    foreach ($rows as $row) {
-        $product_id = getProductId($row["produto"]);
-        $client_id = getClientId($row["cliente"]);
-        $dateTime = DateTime::createFromFormat("d/m/Y H:i", $row["data_pedido"]);
-        $orderDate = $dateTime->format("d/m/Y");
-        $order_date_id = getOrderDayId($orderDate);
-
-        $checkStmt = $pdo->prepare("
-            SELECT total_amount FROM daily_sales 
-            WHERE product_id = :product_id 
-            AND client_id = :client_id 
-            AND order_date_id = :order_date_id
-        ");
-        $checkStmt->execute([
-            ":product_id"   => $product_id,
-            ":client_id"    => $client_id,
-            ":order_date_id" => $order_date_id
-        ]);
-        $existingSale = $checkStmt->fetch(\PDO::FETCH_ASSOC);
-
-        if ($existingSale) {
-            $totalAmount = $existingSale["total_amount"] + $row["valor_total"];
-            $updateStmt = $pdo->prepare("
-                UPDATE daily_sales 
-                SET total_amount = :total_amount
-                WHERE product_id = :product_id 
-                AND client_id = :client_id 
-                AND order_date_id = :order_date_id
-            ");
-            $updateStmt->execute([
-                ":product_id"    => $product_id,
-                ":client_id"     => $client_id,
-                ":order_date_id" => $order_date_id,
-                ":total_amount"  => $totalAmount
-            ]);
-        } else {
-            $insertStmt = $pdo->prepare("
-                INSERT INTO daily_sales (product_id, client_id, order_date_id, total_amount) 
-                VALUES (:product_id, :client_id, :order_date_id, :total_amount)
-            ");
-            $insertStmt->execute([
-                ":product_id"   => $product_id,
-                ":client_id"    => $client_id,
-                ":order_date_id" => $order_date_id,
-                ":total_amount"  => $row["valor_total"]
-            ]);
+    foreach($rows as $key => $row) {
+        if($key > 10000) {
+            break;
         }
-    }
-}
+        $sql = "INSERT INTO crimes (arrest, crime_description_id, location_description_id, local_id, crime_date_id, crime_type_id, iucr_id) VALUES (:arrest, :crime_description_id, :location_description_id, :local_id, :crime_date_id, :crime_type_id, :iucr_id)";
+        try {
+            foreach($rows as $row) {
+                $insert = [];
+                $insert[":arrest"] = $row["arrest"];
+                $insert[":crime_description_id"] = getCrimeDescriptionId($row["description"]);
+                $insert[":location_description_id"] = getLocationDescriptionId($row["location_description"]);
+                $insert[":local_id"] = getLocalId($row["latitude"], $row["longitude"]);
+                $insert[":crime_date_id"] = getCrimeDateId($row["date"]);
+                $insert[":crime_type_id"] = getCrimeTypeId($row["primary_type"]);
+                $insert[":iucr_id"] = getIucrId($row["iucr"]);
 
-function createAggSalesFact(): void
-{
-    $pdo = Connect::getInstance();
-    $pdo->exec("DELETE FROM agr_sales");
-
-    $stmt = $pdo->query("SELECT * from staging_area");
-    $rows = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-    foreach ($rows as $row) {
-        $product_id = getProductId($row["produto"]);
-        $client_id = getClientId($row["cliente"]);
-        $orderTime = DateTime::createFromFormat("d/m/Y H:i", $row["data_pedido"]);
-        $releaseTime = DateTime::createFromFormat("d/m/Y H:i", $row["data_liberacao"]);
-        $releaseDate = '';
-        if ($releaseTime) {
-            $releaseDate = $releaseTime->format("d/m/Y");
-        }
-        $orderDate = $orderTime->format("d/m/Y");
-        $order_date_id = getOrderDayId($orderDate);
-        $release_date_id = getOrderDayId($releaseDate);
-
-        $checkStmt = $pdo->prepare("
-            SELECT total_amount FROM agr_sales 
-            WHERE product_id = :product_id 
-            AND client_id = :client_id 
-            AND order_date_id = :order_date_id
-        ");
-        $checkStmt->execute([
-            ":product_id"   => $product_id,
-            ":client_id"    => $client_id,
-            ":order_date_id" => $order_date_id
-        ]);
-        $existingSale = $checkStmt->fetch(\PDO::FETCH_ASSOC);
-        
-        if ($existingSale) {
-            $totalAmount = $existingSale["total_amount"] + $row["valor_total"];
-            if ($release_date_id) {
-                $updateStmt = $pdo->prepare("
-                UPDATE agr_sales 
-                SET total_amount = :total_amount, 
-                    release_date_id = :release_date_id
-                WHERE product_id = :product_id 
-                AND client_id = :client_id 
-                AND order_date_id = :order_date_id
-                ");
-                $updateStmt->execute([
-                    ":product_id"    => $product_id,
-                    ":client_id"     => $client_id,
-                    ":order_date_id" => $order_date_id,
-                    ":release_date_id" => $release_date_id,
-                    ":total_amount"  => $totalAmount
-                ]);
-            } else {
-                $updateStmt = $pdo->prepare("
-                UPDATE agr_sales 
-                SET total_amount = :total_amount
-                WHERE product_id = :product_id 
-                AND client_id = :client_id 
-                AND order_date_id = :order_date_id
-            ");
-            $updateStmt->execute([
-                ":product_id"    => $product_id,
-                ":client_id"     => $client_id,
-                ":order_date_id" => $order_date_id,
-                ":total_amount"  => $totalAmount
-            ]);
+                $pdo->prepare($sql)->execute($insert);
             }
-        } else {
-            $insertStmt = $pdo->prepare("
-                INSERT INTO agr_sales (product_id, client_id, order_date_id, release_date_id, total_amount) 
-                VALUES (:product_id, :client_id, :order_date_id, :release_date_id, :total_amount)
-            ");
-            $insertStmt->execute([
-                ":product_id"   => $product_id,
-                ":client_id"    => $client_id,
-                ":order_date_id" => $order_date_id,
-                ":release_date_id" => $release_date_id,
-                ":total_amount"  => $row["valor_total"]
-            ]);
+        } catch (Exception $exception) {
+            dd($insert, $exception);
         }
     }
+
 }
 
-function getProductId(string $productName): int
+function getCrimeDescriptionId(string $description): int
 {
     $pdo = Connect::getInstance();
-    $stmt = $pdo->prepare("SELECT id FROM products WHERE product = :product");
-    $stmt->execute([":product" => $productName]);
+    $stmt = $pdo->prepare("SELECT id FROM crime_descriptions WHERE description = :description");
+    $stmt->execute([":description" => ucfirst($description)]);
     $id = $stmt->fetchColumn();
     return $id;
 }
 
-function getClientId(string $clientName): int
+function getLocationDescriptionId(string $locationDescription): int
 {
     $pdo = Connect::getInstance();
-    $stmt = $pdo->prepare("SELECT id FROM clients WHERE client = :client");
-    $stmt->execute([":client" => $clientName]);
+    $stmt = $pdo->prepare("SELECT id FROM location_descriptions WHERE description = :description");
+    $stmt->execute([":description" => ucfirst($locationDescription)]);
     $id = $stmt->fetchColumn();
     return $id;
 }
 
-function getOrderDateId(string $orderDate): int
+function getLocalId(string $latitude, string $longitude): int
 {
     $pdo = Connect::getInstance();
-    $stmt = $pdo->prepare("SELECT id FROM order_dates WHERE order_date = :order_date");
-    $stmt->execute([":order_date" => $orderDate]);
+    $stmt = $pdo->prepare("SELECT id FROM locals WHERE latitude = :latitude AND longitude = :longitude");
+    $stmt->execute([":latitude" => $latitude, ":longitude" => $longitude]);
     $id = $stmt->fetchColumn();
     return $id;
 }
 
-function getOrderDayId(string $orderDay): int | null
+function getCrimeDateId(string $date): int
 {
-    if (!$orderDay) {
-        return null;
-    }
+
     $pdo = Connect::getInstance();
-    $stmt = $pdo->prepare("SELECT id FROM order_days WHERE order_days = :order_days");
-    $stmt->execute([":order_days" => $orderDay]);
+    $stmt = $pdo->prepare("SELECT id FROM crime_dates WHERE crime_date = :crime_date");
+    $stmt->execute([":crime_date" => date("d/m/Y", strtotime($date))]);
+    $id = $stmt->fetchColumn();
+    return $id;
+}
+
+function getCrimeTypeId(string $type): int
+{
+    $pdo = Connect::getInstance();
+    $stmt = $pdo->prepare("SELECT id FROM crime_types WHERE crime_type = :crime_type");
+    $stmt->execute([":crime_type" => $type]);
+    $id = $stmt->fetchColumn();
+    return $id;
+}
+
+function getIucrId(string $iucr): int
+{
+    $pdo = Connect::getInstance();
+    $stmt = $pdo->prepare("SELECT id FROM iucrs WHERE iucr = :iucr");
+    $stmt->execute([":iucr" => $iucr]);
     $id = $stmt->fetchColumn();
     return $id;
 }

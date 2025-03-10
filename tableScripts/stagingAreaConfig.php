@@ -32,6 +32,7 @@ $pdo = Connect::getInstance();
 //$pdo->exec("DELETE FROM staging_area");
 
 function createStagingArea(Csv $csv) {
+    $x = 0;
     $rows = [];
     foreach ($csv->readCsv() as $row) {
         $insertRow = [];
@@ -40,9 +41,13 @@ function createStagingArea(Csv $csv) {
             $insertRow[$databaseField] = $row[$key];
         }
         $rows[] = $insertRow;
-        if (count($rows) === 100) {
+        if (count($rows) === 1000) {
             insertIntoStagingArea($rows);
             $rows = [];
+            $x++;
+            //break;
+        }
+        if($x === 11) {
             break;
         }
     }
