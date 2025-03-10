@@ -27,6 +27,7 @@ function createCrimeFact(): void
 
                 $pdo->prepare($sql)->execute($insert);
             }
+            $key++;
         } catch (Exception $exception) {
             dd($insert, $exception);
         }
