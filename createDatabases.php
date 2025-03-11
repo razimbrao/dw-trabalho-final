@@ -6,12 +6,12 @@ require_once __DIR__ . "/vendor/autoload.php";
 
 $pdo = Connect::getInstance();
 
-//$pdo->exec("DROP TABLE IF EXISTS staging_area");
+$pdo->exec("DROP TABLE IF EXISTS staging_area");
 
 $sql = "CREATE TABLE IF NOT EXISTS staging_area (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    id SERIAL PRIMARY KEY,
     case_number VARCHAR(50),
-    date DATETIME,
+    date TIMESTAMP,
     block VARCHAR(255),
     iucr INT,
     primary_type VARCHAR(100),
@@ -24,33 +24,33 @@ $sql = "CREATE TABLE IF NOT EXISTS staging_area (
     ward INT,
     community_area INT,
     fbi_code INT,
-    x_coordinate DECIMAL(12,6),
-    y_coordinate DECIMAL(12,6),
+    x_coordinate VARCHAR(50) NULL,
+    y_coordinate VARCHAR(50) NULL,
     year INT,
-    updated_on DATETIME,
-    latitude DECIMAL(10,7),
-    longitude DECIMAL(10,7),
+    updated_on TIMESTAMP,
+    latitude VARCHAR(50) NULL,
+    longitude VARCHAR(50) NULL,
     location VARCHAR(255)
 );";
 
 $pdo->exec($sql);
 
 $sql = "CREATE TABLE IF NOT EXISTS crime_descriptions (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    id SERIAL PRIMARY KEY,
     description VARCHAR(255) UNIQUE
 );";
 
 $pdo->exec($sql);
 
 $sql = "CREATE TABLE IF NOT EXISTS location_descriptions (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    id SERIAL PRIMARY KEY,
     description VARCHAR(255) UNIQUE
 );";
 
 $pdo->exec($sql);
 
 $sql = "CREATE TABLE IF NOT EXISTS locals (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    id SERIAL PRIMARY KEY,
     latitude VARCHAR(50),
     longitude VARCHAR(50)
 );";
@@ -58,46 +58,48 @@ $sql = "CREATE TABLE IF NOT EXISTS locals (
 $pdo->exec($sql);
 
 $sql = "CREATE TABLE IF NOT EXISTS crime_dates (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    crime_date DATETIME UNIQUE
+    id SERIAL PRIMARY KEY,
+    crime_date TIMESTAMP UNIQUE
 );";
 
+$pdo->exec($sql);
+
 $sql = "CREATE TABLE IF NOT EXISTS crime_days (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    crime_day DATETIME UNIQUE
+    id SERIAL PRIMARY KEY,
+    crime_day TIMESTAMP UNIQUE
 );";
 
 $pdo->exec($sql);
 
 $sql = "CREATE TABLE IF NOT EXISTS crime_types (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    id SERIAL PRIMARY KEY,
     crime_type VARCHAR(255) UNIQUE
 );";
 
 $pdo->exec($sql);
 
 $sql = "CREATE TABLE IF NOT EXISTS iucrs (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    id SERIAL PRIMARY KEY,
     iucr VARCHAR(50) UNIQUE
 );";
 
 $pdo->exec($sql);
 
 $sql = "CREATE TABLE IF NOT EXISTS crimes (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    id SERIAL PRIMARY KEY,
     arrest BOOLEAN,
     crime_description_id INTEGER,
     location_description_id INTEGER,
-    local_id INTEGER,
+    local_id INTEGER NULL,
     crime_date_id INTEGER,
     crime_type_id INTEGER,
     iucr_id INTEGER,
-    FOREIGN KEY(crime_description_id) REFERENCES crime_descriptions(id),
-    FOREIGN KEY(location_description_id) REFERENCES location_descriptions(id),
-    FOREIGN KEY(local_id) REFERENCES locals(id),
-    FOREIGN KEY(crime_date_id) REFERENCES crime_dates(id),
-    FOREIGN KEY(crime_type_id) REFERENCES crime_types(id),
-    FOREIGN KEY(iucr_id) REFERENCES iucrs(id)
+    FOREIGN KEY(crime_description_id) REFERENCES crime_descriptions(id) ON DELETE CASCADE,
+    FOREIGN KEY(location_description_id) REFERENCES location_descriptions(id) ON DELETE CASCADE,
+    FOREIGN KEY(local_id) REFERENCES locals(id) ON DELETE CASCADE,
+    FOREIGN KEY(crime_date_id) REFERENCES crime_dates(id) ON DELETE CASCADE,
+    FOREIGN KEY(crime_type_id) REFERENCES crime_types(id) ON DELETE CASCADE,
+    FOREIGN KEY(iucr_id) REFERENCES iucrs(id) ON DELETE CASCADE
 );";
 
 $pdo->exec($sql);

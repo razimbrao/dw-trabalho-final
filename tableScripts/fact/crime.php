@@ -8,31 +8,54 @@ function createCrimeFact(): void
     $stmt = $pdo->query("SELECT * from staging_area LIMIT 10000");
     $totalRegisters = 8269600;
     $rows = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+    $sql = "INSERT INTO crimes (arrest, crime_description_id, location_description_id, local_id, crime_date_id, crime_type_id, iucr_id) VALUES (:arrest, :crime_description_id, :location_description_id, :local_id, :crime_date_id, :crime_type_id, :iucr_id)";
+    $stmtInsert = $pdo->prepare($sql);
+
 
     foreach($rows as $key => $row) {
         if($key > 10000) {
             break;
         }
-        $sql = "INSERT INTO crimes (arrest, crime_description_id, location_description_id, local_id, crime_date_id, crime_type_id, iucr_id) VALUES (:arrest, :crime_description_id, :location_description_id, :local_id, :crime_date_id, :crime_type_id, :iucr_id)";
         try {
             foreach($rows as $row) {
                 $insert = [];
-                $insert[":arrest"] = $row["arrest"];
+                $insert[":arrest"] = filter_var($row["arrest"], FILTER_VALIDATE_BOOLEAN);
                 $insert[":crime_description_id"] = getCrimeDescriptionId($row["description"]);
                 $insert[":location_description_id"] = getLocationDescriptionId($row["location_description"]);
-                $insert[":local_id"] = getLocalId($row["latitude"], $row["longitude"]);
+                if (!is_null($row["latitude"]) && !is_null($row["longitude"])) {
+                    $insert[":local_id"] = getLocalId($row["latitude"], $row["longitude"]);
+                } else {
+                    unset($insert[":local_id"]);
+                    $sql = "INSERT INTO crimes (arrest, crime_description_id, location_description_id, crime_date_id, crime_type_id, iucr_id) VALUES (:arrest, :crime_description_id, :location_description_id, :crime_date_id, :crime_type_id, :iucr_id)";
+                }
+
                 $insert[":crime_date_id"] = getCrimeDateId($row["date"]);
                 $insert[":crime_type_id"] = getCrimeTypeId($row["primary_type"]);
                 $insert[":iucr_id"] = getIucrId($row["iucr"]);
 
-                $pdo->prepare($sql)->execute($insert);
+                $stmtInsert->bindValue(':arrest', $insert[":arrest"], PDO::PARAM_BOOL);
+                $stmtInsert->bindValue(':crime_description_id', $insert[":crime_description_id"], PDO::PARAM_INT);
+                $stmtInsert->bindValue(':location_description_id', $insert[":location_description_id"], PDO::PARAM_INT);
+                if (is_null($insert[":local_id"])) {
+                    $stmtInsert->bindValue(':local_id', null, PDO::PARAM_NULL);
+                } else {
+                    $stmtInsert->bindValue(':local_id', $insert[":local_id"], PDO::PARAM_INT);
+                }
+                $stmtInsert->bindValue(':crime_date_id', $insert[":crime_date_id"], PDO::PARAM_INT);
+                $stmtInsert->bindValue(':crime_type_id', $insert[":crime_type_id"], PDO::PARAM_INT);
+                $stmtInsert->bindValue(':iucr_id', $insert[":iucr_id"], PDO::PARAM_INT);
+                try {
+                    $stmtInsert->execute();
+                } catch (PDOException $e) {
+                    dd($insert);
+                }
             }
             $key++;
         } catch (Exception $exception) {
+
             dd($insert, $exception);
         }
     }
-
 }
 
 function getCrimeDescriptionId(string $description): int
@@ -67,7 +90,7 @@ function getCrimeDateId(string $date): int
 
     $pdo = Connect::getInstance();
     $stmt = $pdo->prepare("SELECT id FROM crime_dates WHERE crime_date = :crime_date");
-    $stmt->execute([":crime_date" => date("d/m/Y", strtotime($date))]);
+    $stmt->execute([":crime_date" => date("d/m/Y H:i:s", strtotime($date))]);
     $id = $stmt->fetchColumn();
     return $id;
 }
