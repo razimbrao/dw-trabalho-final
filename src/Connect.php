@@ -10,14 +10,15 @@ class Connect
 
     public static function getInstance(): ?\PDO
     {
-        if(self::$instance === null) {
-            $dsn = "sqlite:" . __DIR__ . "/../database/database.sqlite";
+        if (self::$instance === null) {
+            $dsn = "pgsql:host=localhost;port=5432;dbname=dw-database";
+            $username = "postgres";
+            $password = "123";
 
             try {
-                self::$instance = new \PDO($dsn);
+                self::$instance = new \PDO($dsn, $username, $password);
 
                 self::$instance->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
-
                 self::$instance->setAttribute(\PDO::ATTR_DEFAULT_FETCH_MODE, \PDO::FETCH_ASSOC);
             } catch (\PDOException $exception) {
                 dd($exception);

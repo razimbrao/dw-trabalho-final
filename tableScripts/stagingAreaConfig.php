@@ -29,7 +29,7 @@ const STAGING_AREA_HEADER_TRANSLATION = [
 
 $pdo = Connect::getInstance();
 
-//$pdo->exec("DELETE FROM staging_area");
+$pdo->exec("DELETE FROM staging_area");
 
 function createStagingArea(Csv $csv) {
     $x = 0;
@@ -38,19 +38,29 @@ function createStagingArea(Csv $csv) {
         $insertRow = [];
         foreach ($csv->header as $key => $header) {
             $databaseField = STAGING_AREA_HEADER_TRANSLATION[$header];
-            $insertRow[$databaseField] = $row[$key];
+             $insertRow[$databaseField] = $row[$key];
         }
         $rows[] = $insertRow;
         if (count($rows) === 1000) {
             insertIntoStagingArea($rows);
             $rows = [];
             $x++;
-            //break;
-        }
-        if($x === 11) {
             break;
         }
     }
+}
+
+function convertTo24HourFormat(string $datetime): string
+{
+    // Converte o formato AM/PM para 24 horas
+    $date = \DateTime::createFromFormat('m/d/Y h:i:s A', $datetime);
+    if ($date === false) {
+        // Caso a conversão falhe, tenta o formato sem AM/PM
+        $date = \DateTime::createFromFormat('m/d/Y H:i:s', $datetime);
+    }
+
+    // Se a conversão for bem-sucedida, retorna no formato de 24 horas
+    return $date ? $date->format('Y-m-d H:i:s') : $datetime; // Caso não consiga, retorna a string original
 }
 
 function insertIntoStagingArea(array $rows): void
@@ -92,9 +102,15 @@ function insertIntoStagingArea(array $rows): void
     foreach ($rows as $index => $row) {
         $rowPlaceholders = [];
         foreach ($fields as $field) {
+            if ($field === 'date' || $field === 'updated_on') {
+                $value = convertTo24HourFormat($row[$field]);
+            } else {
+                $value = $row[$field];
+            }
+
             $placeholder = ':' . $field . $index;
             $rowPlaceholders[] = $placeholder;
-            $params[$field . $index] = $row[$field];
+            $params[$field . $index] = $value;
         }
         $placeholders[] = '(' . implode(', ', $rowPlaceholders) . ')';
     }
@@ -104,4 +120,3 @@ function insertIntoStagingArea(array $rows): void
     $stmt = $pdo->prepare($sql);
     $stmt->execute($params);
 }
-
