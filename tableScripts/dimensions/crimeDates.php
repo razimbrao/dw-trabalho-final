@@ -7,8 +7,8 @@ function createCrimeDatesDimension(array $rows): void
 {
     $crimeDates = [];
     foreach ($rows as $row) {
-        $crimeDate = date("d/m/Y", strtotime($row["date"]));
-        $updateDate = date("d/m/Y", strtotime($row["updated_on"]));
+        $crimeDate = date("d/m/Y H:i:s", strtotime($row["date"]));
+        $updateDate = date("d/m/Y H:i:s", strtotime($row["updated_on"]));
         if (!array_key_exists($crimeDate, $crimeDates)) {
             $crimeDates[$crimeDate] = 1;
         }

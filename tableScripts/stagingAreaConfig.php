@@ -41,7 +41,7 @@ function createStagingArea(Csv $csv) {
              $insertRow[$databaseField] = $row[$key];
         }
         $rows[] = $insertRow;
-        if (count($rows) === 1000) {
+        if (count($rows) === 10) {
             insertIntoStagingArea($rows);
             $rows = [];
             $x++;
@@ -52,15 +52,12 @@ function createStagingArea(Csv $csv) {
 
 function convertTo24HourFormat(string $datetime): string
 {
-    // Converte o formato AM/PM para 24 horas
     $date = \DateTime::createFromFormat('m/d/Y h:i:s A', $datetime);
     if ($date === false) {
-        // Caso a conversão falhe, tenta o formato sem AM/PM
         $date = \DateTime::createFromFormat('m/d/Y H:i:s', $datetime);
     }
 
-    // Se a conversão for bem-sucedida, retorna no formato de 24 horas
-    return $date ? $date->format('Y-m-d H:i:s') : $datetime; // Caso não consiga, retorna a string original
+    return $date ? $date->format('Y-m-d H:i:s') : $datetime;
 }
 
 function insertIntoStagingArea(array $rows): void
@@ -108,6 +105,10 @@ function insertIntoStagingArea(array $rows): void
                 $value = $row[$field];
             }
 
+            if (in_array($field, ['x_coordinate', 'y_coordinate', 'latitude', 'longitude']) && $value === '') {
+                $value = NULL;
+            }
+
             $placeholder = ':' . $field . $index;
             $rowPlaceholders[] = $placeholder;
             $params[$field . $index] = $value;
@@ -116,7 +117,7 @@ function insertIntoStagingArea(array $rows): void
     }
 
     $sql = "INSERT INTO staging_area (" . implode(', ', $fields) . ") VALUES " . implode(', ', $placeholders);
-
+    //dd($sql);
     $stmt = $pdo->prepare($sql);
     $stmt->execute($params);
 }

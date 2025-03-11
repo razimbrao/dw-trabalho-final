@@ -24,12 +24,12 @@ $sql = "CREATE TABLE IF NOT EXISTS staging_area (
     ward INT,
     community_area INT,
     fbi_code INT,
-    x_coordinate DECIMAL(12,6),
-    y_coordinate DECIMAL(12,6),
+    x_coordinate VARCHAR(50) NULL,
+    y_coordinate VARCHAR(50) NULL,
     year INT,
     updated_on TIMESTAMP,
-    latitude DECIMAL(10,7),
-    longitude DECIMAL(10,7),
+    latitude VARCHAR(50) NULL,
+    longitude VARCHAR(50) NULL,
     location VARCHAR(255)
 );";
 
@@ -90,16 +90,16 @@ $sql = "CREATE TABLE IF NOT EXISTS crimes (
     arrest BOOLEAN,
     crime_description_id INTEGER,
     location_description_id INTEGER,
-    local_id INTEGER,
+    local_id INTEGER NULL,
     crime_date_id INTEGER,
     crime_type_id INTEGER,
     iucr_id INTEGER,
-    FOREIGN KEY(crime_description_id) REFERENCES crime_descriptions(id),
-    FOREIGN KEY(location_description_id) REFERENCES location_descriptions(id),
-    FOREIGN KEY(local_id) REFERENCES locals(id),
-    FOREIGN KEY(crime_date_id) REFERENCES crime_dates(id),
-    FOREIGN KEY(crime_type_id) REFERENCES crime_types(id),
-    FOREIGN KEY(iucr_id) REFERENCES iucrs(id)
+    FOREIGN KEY(crime_description_id) REFERENCES crime_descriptions(id) ON DELETE CASCADE,
+    FOREIGN KEY(location_description_id) REFERENCES location_descriptions(id) ON DELETE CASCADE,
+    FOREIGN KEY(local_id) REFERENCES locals(id) ON DELETE CASCADE,
+    FOREIGN KEY(crime_date_id) REFERENCES crime_dates(id) ON DELETE CASCADE,
+    FOREIGN KEY(crime_type_id) REFERENCES crime_types(id) ON DELETE CASCADE,
+    FOREIGN KEY(iucr_id) REFERENCES iucrs(id) ON DELETE CASCADE
 );";
 
 $pdo->exec($sql);
