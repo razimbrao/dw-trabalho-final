@@ -16,21 +16,21 @@ $sql = "CREATE TABLE IF NOT EXISTS staging_area (
     iucr VARCHAR(50),
     primary_type VARCHAR(100),
     description TEXT,
-    location_description VARCHAR(255),
+    location_description VARCHAR(255) NULL,
     arrest BOOLEAN,
     domestic BOOLEAN,
     beat INT,
     district INT,
-    ward INT,
-    community_area INT,
-    fbi_code VARCHAR(50),
+    ward INT NULL,
+    community_area INT NULL,
+    fbi_code VARCHAR(50) NULL,
     x_coordinate VARCHAR(50) NULL,
     y_coordinate VARCHAR(50) NULL,
-    year INT,
-    updated_on TIMESTAMP,
+    year INT NULL,
+    updated_on TIMESTAMP NULL,
     latitude VARCHAR(50) NULL,
     longitude VARCHAR(50) NULL,
-    location VARCHAR(255)
+    location VARCHAR(255) NULL
 );";
 
 $pdo->exec($sql);
@@ -89,7 +89,7 @@ $sql = "CREATE TABLE IF NOT EXISTS crimes (
     id SERIAL PRIMARY KEY,
     arrest BOOLEAN,
     crime_description_id INTEGER,
-    location_description_id INTEGER,
+    location_description_id INTEGER NULL,
     local_id INTEGER NULL,
     crime_date_id INTEGER,
     crime_type_id INTEGER,

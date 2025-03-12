@@ -32,21 +32,26 @@ $pdo = Connect::getInstance();
 $pdo->exec("DELETE FROM staging_area");
 
 function createStagingArea(Csv $csv) {
-    $x = 0;
     $rows = [];
-    foreach ($csv->readCsv() as $row) {
-        $insertRow = [];
-        foreach ($csv->header as $key => $header) {
-            $databaseField = STAGING_AREA_HEADER_TRANSLATION[$header];
-             $insertRow[$databaseField] = $row[$key];
+    try {
+        foreach ($csv->readCsv() as $row) {
+            $insertRow = [];
+            foreach ($csv->header as $key => $header) {
+                try {
+                    $databaseField = STAGING_AREA_HEADER_TRANSLATION[$header];
+                    $insertRow[$databaseField] = $row[$key];
+                } catch (exception $e) {
+                    dd($databaseField);
+                }
+            }
+            $rows[] = $insertRow;
+            if (count($rows) === 1000) {
+                insertIntoStagingArea($rows);
+                $rows = [];
+            }
         }
-        $rows[] = $insertRow;
-        if (count($rows) === 1000) {
-            insertIntoStagingArea($rows);
-            $rows = [];
-            $x++;
-            break;
-        }
+    } catch (exception $e) {
+        echo $e->getMessage();
     }
 }
 
@@ -99,14 +104,18 @@ function insertIntoStagingArea(array $rows): void
     foreach ($rows as $index => $row) {
         $rowPlaceholders = [];
         foreach ($fields as $field) {
-            if ($field === 'date' || $field === 'updated_on') {
+            if ($field === 'date' || $field === 'updated_on' && !is_null($row[$field])) {
                 $value = convertTo24HourFormat($row[$field]);
             } else {
                 $value = $row[$field];
             }
 
             if (in_array($field, ['x_coordinate', 'y_coordinate', 'latitude', 'longitude']) && $value === '') {
-                $value = NULL;
+                $value = null;
+            }
+
+            if (!isset($value) || $value === '' || strtolower($value) === 'null') {
+                $value = null;
             }
 
             $placeholder = ':' . $field . $index;
@@ -116,8 +125,24 @@ function insertIntoStagingArea(array $rows): void
         $placeholders[] = '(' . implode(', ', $rowPlaceholders) . ')';
     }
 
-    $sql = "INSERT INTO staging_area (" . implode(', ', $fields) . ") VALUES " . implode(', ', $placeholders);
-    //dd($sql);
+    try {
+        $sql = "INSERT INTO staging_area (" . implode(', ', $fields) . ") VALUES " . implode(', ', $placeholders);
+    } catch (Exception $e) {
+        echo $e->getMessage();
+        dd($sql);
+    }
+
     $stmt = $pdo->prepare($sql);
-    $stmt->execute($params);
+    foreach ($params as $key => $value) {
+        $paramType = PDO::PARAM_STR;
+        if (is_null($value)) {
+            $paramType = PDO::PARAM_NULL;
+        } elseif (is_bool($value)) {
+            $paramType = PDO::PARAM_BOOL;
+        } elseif (is_int($value)) {
+            $paramType = PDO::PARAM_INT;
+        }
+        $stmt->bindValue(':' . $key, $value, $paramType);
+    }
+    $stmt->execute();
 }
