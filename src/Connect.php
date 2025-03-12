@@ -1,6 +1,6 @@
 <?php
 
-namespace Php\Dw;
+namespace Php\DW;
 
 class Connect
 {
@@ -13,7 +13,7 @@ class Connect
         if (self::$instance === null) {
             $dsn = "pgsql:host=localhost;port=5432;dbname=dw-database";
             $username = "postgres";
-            $password = "123";
+            $password = "root";
 
             try {
                 self::$instance = new \PDO($dsn, $username, $password);
@@ -21,7 +21,7 @@ class Connect
                 self::$instance->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
                 self::$instance->setAttribute(\PDO::ATTR_DEFAULT_FETCH_MODE, \PDO::FETCH_ASSOC);
             } catch (\PDOException $exception) {
-                dd($exception);
+                // dd($exception);
             }
         }
         return self::$instance;

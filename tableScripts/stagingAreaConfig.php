@@ -41,7 +41,7 @@ function createStagingArea(Csv $csv) {
              $insertRow[$databaseField] = $row[$key];
         }
         $rows[] = $insertRow;
-        if (count($rows) === 10) {
+        if (count($rows) === 1000) {
             insertIntoStagingArea($rows);
             $rows = [];
             $x++;
