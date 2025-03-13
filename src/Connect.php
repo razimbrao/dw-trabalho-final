@@ -11,8 +11,8 @@ class Connect
     public static function getInstance(): ?\PDO
     {
         if (self::$instance === null) {
-            $dsn = "pgsql:host=localhost;port=5432;dbname=dw-database";
-            $username = "postgres";
+            $dsn = "pgsql:host=banco_de_dados;port=5432;dbname=dw";
+            $username = "cascata";
             $password = "root";
 
             try {
@@ -21,7 +21,7 @@ class Connect
                 self::$instance->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
                 self::$instance->setAttribute(\PDO::ATTR_DEFAULT_FETCH_MODE, \PDO::FETCH_ASSOC);
             } catch (\PDOException $exception) {
-                // dd($exception);
+                dd($exception);
             }
         }
         return self::$instance;

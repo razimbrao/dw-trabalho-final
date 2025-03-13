@@ -6,6 +6,9 @@ function createLocationDescriptionsDimension(array $rows): void
 {
     $locationDescriptions = [];
     foreach($rows as $row) {
+        if(is_null($row["location_description"])) {
+            continue;
+        }
         $locationDescription = ucfirst(trim($row["location_description"]));
 
         if(array_key_exists($locationDescription, $locationDescriptions)) {

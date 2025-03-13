@@ -1,0 +1,32 @@
+services:
+  # api-1
+  dw:
+    container_name: dw
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+      args:
+        PHP_VERSION: "8.4.3-bullseye"
+    volumes:
+      - ./:/var/www/app
+    networks:
+      - my-shared-network
+
+  # mysql
+  banco_de_dados:
+    image: postgres:latest
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: "cascata"
+      POSTGRES_PASSWORD: "root"
+      POSTGRES_DB: "dw"
+    volumes:
+      - ./docker/backup_banco_de_dados/database:/var/lib/postgresql/data
+    networks:
+      - my-shared-network
+
+networks:
+  my-shared-network:
+    driver: bridge

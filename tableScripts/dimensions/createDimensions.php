@@ -21,6 +21,8 @@ function createDimensions(): void
     $pdo->exec("DELETE FROM location_descriptions");
     $pdo->exec("DELETE FROM crime_dates");
     $pdo->exec("DELETE FROM crime_days");
+    $pdo->exec("DELETE FROM crimes");
+    dd("dale");
     $stmt = $pdo->query("SELECT * FROM staging_area LIMIT 10000");
     $rows = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 

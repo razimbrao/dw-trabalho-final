@@ -6,6 +6,10 @@ function createLocalsDimension(array $rows): void
 {
     $locals = [];
     foreach($rows as $row) {
+        if(is_null($row["latitude"]) || is_null($row["longitude"])) {
+            continue;
+        }
+
         $latitude = trim($row["latitude"]);
         $longitude = trim($row["longitude"]);
 
