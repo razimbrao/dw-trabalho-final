@@ -1,7 +1,7 @@
 <?php
 
 use Php\Dw\Connect;
-use Php\Dw\dimentions\LocationDescription;
+use Php\Dw\dimensions\LocationDescription;
 
 require_once __DIR__ . "/locals.php";
 require_once __DIR__ . "/crimeDescriptions.php";
