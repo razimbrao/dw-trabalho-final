@@ -1,14 +1,13 @@
 <?php
 
 use Php\Dw\Connect;
+use Php\Dw\dimensions\CrimeDate;
+use Php\Dw\dimensions\CrimeDay;
+use Php\Dw\dimensions\CrimeDescription;
+use Php\Dw\dimensions\CrimeType;
+use Php\Dw\dimensions\Iucr;
+use Php\Dw\dimensions\Locals;
 use Php\Dw\dimensions\LocationDescription;
-
-require_once __DIR__ . "/locals.php";
-require_once __DIR__ . "/crimeDescriptions.php";
-require_once __DIR__ . "/crimeDates.php";
-require_once __DIR__ . "/crimeTypes.php";
-require_once __DIR__ . "/iucrs.php";
-require_once __DIR__ . "/crimeTypes.php";
 
 function createDimensions(): void
 {
@@ -31,15 +30,15 @@ function createDimensions(): void
         $stmt = $pdo->query("SELECT * FROM staging_area LIMIT $limitRegister OFFSET $actualRegisters");
         $actualRegisters += 100;
         $rows = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-    
-        createLocalsDimension($rows);
-        LocationDescription::getInstance()->createLocationDescriptionsDimension($rows);
-        createCrimeDescriptionsDimension($rows);
-        createCrimeTypesDimension($rows);
-        createIUCRsDimension($rows);
-        createCrimeDatesDimension($rows);
-        createCrimeDaysDimension($rows);
 
-    }while($actualRegisters < $totalRegisters);
+        LocationDescription::getInstance()->createLocationDescriptionsDimension($rows);
+        CrimeType::getInstance()->createCrimeTypeDimension($rows);
+        Iucr::getInstance()->createIucrDimension($rows);
+        Locals::getInstance()->createLocalDimension($rows);
+        CrimeDate::getInstance()->createCrimeDateDimension($rows);
+        CrimeDay::getInstance()->createCrimeDayDimension($rows);
+        CrimeDescription::getInstance()->createCrimeDescriptionDimension($rows);
+
+    } while($actualRegisters < $totalRegisters);
 
 }

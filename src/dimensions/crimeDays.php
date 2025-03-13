@@ -5,14 +5,14 @@ namespace Php\Dw\dimensions;
 use Exception;
 use Php\Dw\Connect;
 
-class CrimeDaysManager
+class CrimeDay
 {
-    private static ?CrimeDaysManager $instance = null;
+    private static ?CrimeDay $instance = null;
     private static array $crimeDays = [];
 
     private function __construct() {}
 
-    public static function getInstance(): CrimeDaysManager
+    public static function getInstance(): CrimeDay
     {
         if (self::$instance === null) {
             self::$instance = new self();
@@ -20,7 +20,7 @@ class CrimeDaysManager
         return self::$instance;
     }
 
-    public function createCrimeDaysDimension(array $rows): void
+    public function createCrimeDayDimension(array $rows): void
     {
         $crimeDaysMethod = [];
 
