@@ -47,19 +47,19 @@ class Iucr
 
         $pdo = Connect::getInstance();
 
-        $sql = "INSERT INTO iucrs (description) VALUES (:iucr)";
+        $sql = "INSERT INTO iucrs (iucr) VALUES (:iucr)";
 
         foreach ($iucrsMethod as $iucrType => $value) {
             try {
                 $pdo->prepare($sql)->execute([':iucr' => $iucrType]);
             } catch (Exception $e) {
-                dd($locationDescription);
+                dd($e);
             }
         }
     }
 
     public function getLocationDescriptions(): array
     {
-        return self::$locationDescriptions;
+        return self::$iucr;
     }
 }
