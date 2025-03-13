@@ -36,18 +36,10 @@ class CrimeDate
             }
         }
 
-        foreach(array_keys($crimeDatesMethod) as $key){
-            if(array_key_exists($key, self::$crimeDates)){
-                unset($crimeDatesMethod[$key]);
-            }
-        }
-       
-        self::$crimeDates = array_merge(self::$crimeDates, $crimeDatesMethod);
-
         $pdo = Connect::getInstance();
 
         try {
-            $sql = "INSERT INTO crime_dates (crime_date) VALUES (:crime_date)";
+            $sql = "INSERT INTO crime_dates (crime_date) VALUES (:crime_date) ON CONFLICT (crime_date) DO NOTHING";
             $stmt = $pdo->prepare($sql);
             foreach (self::$crimeDates as $crimeDate => $value) {
                 $stmt->execute([':crime_date' => $crimeDate]);

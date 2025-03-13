@@ -49,7 +49,7 @@ class CrimeDay
 
         $pdo = Connect::getInstance();
 
-        $sql = "INSERT INTO crime_days (crime_day) VALUES (:crime_day)";
+        $sql = "INSERT INTO crime_days (crime_day) VALUES (:crime_day) ON CONFLICT (:crime_day) DO NOTHING";
         $stmt = $pdo->prepare($sql);
 
         foreach (self::$crimeDays as $crimeDay => $_) {

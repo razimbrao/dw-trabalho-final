@@ -37,23 +37,15 @@ class LocationDescription
             $locationDescriptionsMethod[$locationDescription] = 1;
         }
 
-        foreach(array_keys($locationDescriptionsMethod) as $key){
-            if(array_key_exists($key, self::$locationDescriptions)){
-                unset($locationDescriptionsMethod[$key]);
-            }
-        }
-       
-        self::$locationDescriptions = array_merge(self::$locationDescriptions, $locationDescriptionsMethod);
-
         $pdo = Connect::getInstance();
 
-        $sql = "INSERT INTO location_descriptions (description) VALUES (:description)";
+        $sql = "INSERT INTO location_descriptions (description) VALUES (:description) ON CONFLICT (description) DO NOTHING";
 
         foreach ($locationDescriptionsMethod as $locationDescription => $value) {
             try {
                 $pdo->prepare($sql)->execute([':description' => $locationDescription]);
             } catch (Exception $e) {
-                dd($locationDescription);
+                dd($locationDescription, $e);
             }
         }
     }

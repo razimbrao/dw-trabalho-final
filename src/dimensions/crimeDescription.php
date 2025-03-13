@@ -34,18 +34,9 @@ class CrimeDescription
             $crimeDescriptionsMethod[$description] = 1;
         }
 
-        foreach(array_keys($crimeDescriptionsMethod) as $key){
-            if(array_key_exists($key, self::$crimeDescriptions)){
-                unset($crimeDescriptionsMethod[$key]);
-            }
-        }
-       
-        self::$crimeDescriptions = array_merge(self::$crimeDescriptions, $crimeDescriptionsMethod);
-
-
         $pdo = Connect::getInstance();
 
-        $sql = "INSERT INTO crime_descriptions (description) VALUES (:description)";
+        $sql = "INSERT INTO crime_descriptions (description) VALUES (:description) ON CONFLICT (description) DO NOTHING";
 
         foreach (self::$crimeDescriptions as $crimeDescription => $value) {
             $pdo->prepare($sql)->execute([':description' => $crimeDescription]);

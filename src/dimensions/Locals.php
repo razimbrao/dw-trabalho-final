@@ -58,7 +58,7 @@ class Locals
                 [$latitude, $longitude] = explode("#", $localType);
                 $pdo->prepare($sql)->execute([":latitude" => $latitude, ":longitude" => $longitude]);
             } catch (Exception $e) {
-                dd($locationDescription);
+                dd($e);
             }
         }
     }

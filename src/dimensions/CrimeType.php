@@ -37,29 +37,16 @@ class CrimeType
             $crimeTypesMethod[$crimeType] = 1;
         }
 
-        foreach(array_keys($crimeTypesMethod) as $key){
-            if(array_key_exists($key, self::$crimeType)){
-                unset($crimeTypesMethod[$key]);
-            }
-        }
-
-        self::$crimeType = array_merge(self::$crimeType, $crimeTypesMethod);
-
         $pdo = Connect::getInstance();
 
-        $sql = "INSERT INTO location_descriptions (description) VALUES (:description)";
+        $sql = "INSERT INTO crime_types (crime_type) VALUES (:crime_type) ON CONFLICT (crime_type) DO NOTHING";
 
         foreach ($crimeTypesMethod as $crimeType => $value) {
             try {
-                $pdo->prepare($sql)->execute([':description' => $crimeType]);
+                $pdo->prepare($sql)->execute([':crime_type' => $crimeType]);
             } catch (Exception $e) {
-                dd($locationDescription);
+                dd($crimeType, $e);
             }
         }
-    }
-
-    public function getLocationDescriptions(): array
-    {
-        return self::$locationDescriptions;
     }
 }

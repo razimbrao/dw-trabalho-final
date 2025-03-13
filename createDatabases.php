@@ -6,7 +6,7 @@ require_once __DIR__ . "/vendor/autoload.php";
 
 $pdo = Connect::getInstance();
 
-$pdo->exec("DROP TABLE IF EXISTS staging_area");
+//$pdo->exec("DROP TABLE IF EXISTS staging_area");
 
 $sql = "CREATE TABLE IF NOT EXISTS staging_area (
     id SERIAL PRIMARY KEY,
@@ -52,7 +52,8 @@ $pdo->exec($sql);
 $sql = "CREATE TABLE IF NOT EXISTS locals (
     id SERIAL PRIMARY KEY,
     latitude VARCHAR(50),
-    longitude VARCHAR(50)
+    longitude VARCHAR(50),
+    UNIQUE (latitude, longitude)
 );";
 
 $pdo->exec($sql);

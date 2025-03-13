@@ -10,16 +10,16 @@ function createCrimeFact(): void
     $stmtInsert = $pdo->prepare($sql);
 
     $actualRegisters = 0;
-    $totalRegisters = 1000;
+    $totalRegisters = 10000;
 
-    //$totalRegisters = 8269600;
+    //$totalRegisters = 8271000;
    
     do{
         $limitRegister = $actualRegisters + 100;
         $stmt = $pdo->query("SELECT * FROM staging_area LIMIT $limitRegister OFFSET $actualRegisters");
         $rows = $stmt->fetchAll(\PDO::FETCH_ASSOC);
         $actualRegisters += 100;
-
+        var_dump($actualRegisters);
 
         foreach($rows as $key => $row) {
 
@@ -37,7 +37,9 @@ function createCrimeFact(): void
             } else {
                 unset($insert[":local_id"]);
             }
-
+            if ($insert[":local_id"] === 0) {
+                dd($row);
+            }
             $insert[":crime_date_id"] = getCrimeDateId($row["date"]);
             $insert[":crime_type_id"] = getCrimeTypeId($row["primary_type"]);
             $insert[":iucr_id"] = getIucrId($row["iucr"]);
@@ -60,6 +62,7 @@ function createCrimeFact(): void
             try {
                 $stmtInsert->execute();
             } catch (PDOException $e) {
+                echo ($e->getMessage());
                 //dd($insert);
             }
         }

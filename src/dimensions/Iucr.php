@@ -37,23 +37,15 @@ class Iucr
             $iucrsMethod[$iucrType] = 1;
         }
 
-        foreach(array_keys($iucrsMethod) as $key){
-            if(array_key_exists($key, self::$iucr)){
-                unset($iucrsMethod[$key]);
-            }
-        }
-
-        self::$iucr = array_merge(self::$iucr, $iucrsMethod);
-
         $pdo = Connect::getInstance();
 
-        $sql = "INSERT INTO iucrs (iucr) VALUES (:iucr)";
+        $sql = "INSERT INTO iucrs (iucr) VALUES (:iucr) ON CONFLICT (iucr) DO NOTHING";
 
         foreach ($iucrsMethod as $iucrType => $value) {
             try {
                 $pdo->prepare($sql)->execute([':iucr' => $iucrType]);
             } catch (Exception $e) {
-                dd($iucrsMethod, self::$iucr);
+                dd($iucrsMethod, self::$iucr, $e);
             }
         }
     }
