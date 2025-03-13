@@ -41,13 +41,14 @@ function createStagingArea(Csv $csv) {
                     $databaseField = STAGING_AREA_HEADER_TRANSLATION[$header];
                     $insertRow[$databaseField] = $row[$key];
                 } catch (exception $e) {
-                    dd($databaseField);
+                    //dd($databaseField);
                 }
             }
             $rows[] = $insertRow;
             if (count($rows) === 1000) {
                 insertIntoStagingArea($rows);
                 $rows = [];
+                break;
             }
         }
     } catch (exception $e) {
@@ -129,7 +130,7 @@ function insertIntoStagingArea(array $rows): void
         $sql = "INSERT INTO staging_area (" . implode(', ', $fields) . ") VALUES " . implode(', ', $placeholders);
     } catch (Exception $e) {
         echo $e->getMessage();
-        dd($sql);
+        //dd($sql);
     }
 
     $stmt = $pdo->prepare($sql);
