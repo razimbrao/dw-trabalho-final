@@ -19,6 +19,7 @@ services:
       - "5432:5432"
     restart: unless-stopped
     environment:
+      POSTGRES_ROOT_PASSWORD: "root"
       POSTGRES_USER: "cascata"
       POSTGRES_PASSWORD: "root"
       POSTGRES_DB: "dw"

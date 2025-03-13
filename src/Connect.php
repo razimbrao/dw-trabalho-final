@@ -1,6 +1,6 @@
 <?php
 
-namespace Php\DW;
+namespace Php\Dw;
 
 class Connect
 {
@@ -11,7 +11,7 @@ class Connect
     public static function getInstance(): ?\PDO
     {
         if (self::$instance === null) {
-            $dsn = "pgsql:host=localhost;port=5432;dbname=dw-database";
+            $dsn = "pgsql:host=localhost;port=5432;dbname=dw";
             $username = "postgres";
             $password = "root";
 

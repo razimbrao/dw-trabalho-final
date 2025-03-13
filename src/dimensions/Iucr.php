@@ -53,7 +53,7 @@ class Iucr
             try {
                 $pdo->prepare($sql)->execute([':iucr' => $iucrType]);
             } catch (Exception $e) {
-                dd($e);
+                dd($iucrsMethod, self::$iucr);
             }
         }
     }
