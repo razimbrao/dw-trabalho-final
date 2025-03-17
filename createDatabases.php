@@ -6,8 +6,6 @@ require_once __DIR__ . "/vendor/autoload.php";
 
 $pdo = Connect::getInstance();
 
-//$pdo->exec("DROP TABLE IF EXISTS staging_area");
-
 $sql = "CREATE TABLE IF NOT EXISTS staging_area (
     id SERIAL PRIMARY KEY,
     case_number VARCHAR(50),

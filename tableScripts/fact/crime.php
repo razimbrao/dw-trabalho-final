@@ -10,17 +10,18 @@ function createCrimeFact(): void
     $stmtInsert = $pdo->prepare($sql);
 
     $actualRegisters = 0;
-    $totalRegisters = 10000;
+    $totalRegisters = 1000;
 
     //$totalRegisters = 8271000;
    
     do{
         $limitRegister = $actualRegisters + 100;
-        $stmt = $pdo->query("SELECT * FROM staging_area LIMIT $limitRegister OFFSET $actualRegisters");
+        $stmt = $pdo->query("SELECT * FROM staging_area WHERE description !== 'FIRST DEGREE MURDER' ORDER BY ID LIMIT $limitRegister OFFSET $actualRegisters");
         $rows = $stmt->fetchAll(\PDO::FETCH_ASSOC);
         $actualRegisters += 100;
         var_dump($actualRegisters);
 
+        dd($rows);
         foreach($rows as $key => $row) {
 
             $insert = [];
@@ -37,15 +38,17 @@ function createCrimeFact(): void
             } else {
                 unset($insert[":local_id"]);
             }
-            if ($insert[":local_id"] === 0) {
-                dd($row);
-            }
+
             $insert[":crime_date_id"] = getCrimeDateId($row["date"]);
+            if ($insert[":crime_date_id"] === 0) {
+                dd($row, $insert, $key);
+            }
             $insert[":crime_type_id"] = getCrimeTypeId($row["primary_type"]);
             $insert[":iucr_id"] = getIucrId($row["iucr"]);
 
             $stmtInsert->bindValue(':arrest', $insert[":arrest"], PDO::PARAM_BOOL);
             $stmtInsert->bindValue(':crime_description_id', $insert[":crime_description_id"], PDO::PARAM_INT);
+            var_dump($insert[":crime_description_id"]);
             if(is_null($insert[":location_description_id"])) {
                 $stmtInsert->bindValue(':location_description_id', null, PDO::PARAM_NULL);
             } else {

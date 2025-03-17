@@ -11,9 +11,9 @@ class Connect
     public static function getInstance(): ?\PDO
     {
         if (self::$instance === null) {
-            $dsn = "pgsql:host=localhost;port=5432;dbname=dw";
+            $dsn = "pgsql:host=localhost;port=5432;dbname=dw-database";
             $username = "postgres";
-            $password = "root";
+            $password = "123";
 
             try {
                 self::$instance = new \PDO($dsn, $username, $password);
